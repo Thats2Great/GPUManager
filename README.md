@@ -7,7 +7,10 @@ This tool can be used when there are a large number of scripts that need to be r
 在脚本数量极大且需要批量跑，没法在跑完一个命令马上重新挂上新命令时，可以使用此工具。  
 **注意**请慎用这个工具，不要占用所有的显卡，否则你的同学可能会对你感到不满
 
-how to use :  
+**How to use** :
+The original parameters must include the --gpu option.  
+必须保证原有的参数里有 --gpu 这个选项  
+Method 1:  
 ```python
 from gpu_manager import GPUManager
 
@@ -22,3 +25,11 @@ commands = [
 # 调用库中的方法运行任务
 gpu_manager.run_task_on_gpus(commands)
 ```
+Method 2:
+run the file directly and path the parameter (keep it in the same directory)  
+也可以直接运行此文件，传入参数(保证同目录下)  
+```python
+python gpu_manager.py --min_memory 3000 --max_gpus 2 --gpu_check_interval 30 --shell_path my/shell/path.sh
+```
+后续再更新多机抢卡和分布式... 
+

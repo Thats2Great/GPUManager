@@ -49,3 +49,37 @@ class GPUManager:
             selected_gpu = selected_gpus[i % len(selected_gpus)]  # Assign GPU
             cmd = cmd.replace('--gpu 1', f'--gpu {selected_gpu}')  # Replace GPU parameter
             subprocess.run(cmd, shell=True)
+    def load_commands_from_sh(self, shell_path):
+        """
+        load command from shell file
+        :param shell_path: .sh file path
+        :return: command list
+        """
+        with open(shell_path, 'r') as f:
+            commands = []
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#'): 
+                    commands.append(line)
+        return commands
+
+def main():
+    # Use argparse to handle command line arguments
+    parser = argparse.ArgumentParser(description="Automatically preempt GPUs and run script tasks")
+    parser.add_argument('--min_memory', type=int, default=3000, help="Minimum GPU memory per card (MB)")
+    parser.add_argument('--max_gpus', type=int, default=1, help="Maximum number of GPUs to use")
+    parser.add_argument('--gpu_check_interval', type=int, default=5, help="Interval for checking GPU status (seconds)")
+    parser.add_argument('--shell_path', type=str, required=True, help="Path to the shell script file")
+    args = parser.parse_args()
+
+    # Initialize GPU manager
+    gpu_manager = GPUManager(min_memory=args.min_memory, max_gpus=args.max_gpus, gpu_check_interval=args.gpu_check_interval)
+
+    # Load commands from shell script
+    commands = gpu_manager.load_commands_from_sh(args.shell_path)
+
+    # Run tasks
+    gpu_manager.run_task_on_gpus(commands)
+
+if __name__ == '__main__':
+    main()
